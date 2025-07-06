@@ -1,12 +1,18 @@
 package ui;
 
+import modelos.Libro;
 import modelos.Usuario;
+import procesos.LibroService;
+import procesos.UsuarioService;
+import procesos.UsuarioServiceImpl;
+import procesos.LibroServiceImpl;
 import util.Conexion;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.List;
 
 public class RegistroProcesos {
     private JPanel panel1;
@@ -42,7 +48,12 @@ public class RegistroProcesos {
     private JButton btnCancelarD;
     private DefaultTableModel tableModel;
 
+    private UsuarioService usuarioService;
+    private LibroService libroService;
+
     public RegistroProcesos() {
+        usuarioService = new UsuarioServiceImpl();
+        libroService = new LibroServiceImpl();
         // Initialize components and set up the UI
         JFrame frame = new JFrame("Registro de Procesos");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -104,11 +115,9 @@ public class RegistroProcesos {
                     user.setNombre(nombre);
                     user.setApellidos(apellido);
                     user.setDni(dni);
-//                    usuarioService = new UsuarioServiceImpl();
-//                    usuarioService.registrarUsuario(user);
-                    //userDao.agregarUsuario(user);
+                    usuarioService.registrarUsuario(user);
                     JOptionPane.showMessageDialog(panel1, "Usuario registrado: " + nombre + " " + apellido);
-//                    LimpiarUsuaros();
+                    LimpiarUsuaros();
                 }
             }
         });
@@ -116,20 +125,109 @@ public class RegistroProcesos {
         btnCancelar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                txtNombre.setText("");
-                txtApellido.setText("");
-                txtDNI.setText("");
-                // Cerrar la aplicación
-                System.exit(0);
+                LimpiarUsuaros();
             }
         });
+        btnGuardar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String autor = txtAutor.getText();
+                String titulo = txtTitulo.getText();
+                String anioPublicacion = txtAnioPublicacion.getText();
+
+                if (autor.isEmpty() || titulo.isEmpty() || anioPublicacion.isEmpty()) {
+                    JOptionPane.showMessageDialog(panel1, "Por favor, complete todos los campos.",
+                            "Campos incompletos", JOptionPane.WARNING_MESSAGE);
+                } else {
+                    Libro libro = new Libro();
+                    libro.setAutor(autor);
+                    libro.setTitulo(titulo);
+                    libro.setAnioPublicacion(anioPublicacion);
+                    libroService.registrarLibro(libro);
+                    JOptionPane.showMessageDialog(panel1, "Libro guardado: " + titulo + " de " + autor);
+                    limpiarCamposEnContenedor(panel1);
+                    cargarLibros();
+                }
+            }
+        });
+
+        cargarLibros();
+        cargarUsuariosEnCombo(comboBox1);
+        cargarLibrosEnCombo(comboBox2);
+
+
     }
-//    public static void main(String[] args) {
-//        new RegistroProcesos();
-////        SwingUtilities.invokeLater(RegistroProcesos::new);
-//        Conexion cn = new Conexion();
-//        cn.conectar();
-//    }
+    private void LimpiarUsuaros() {
+        txtNombre.setText("");
+        txtApellido.setText("");
+        txtDNI.setText("");
+        txtNombre.requestFocus();
+    }
+
+    //Libros
+    private void cargarLibros() {
+        tableModel.setRowCount(0);
+
+        libroService = new LibroServiceImpl();
+        List<Libro> libros = libroService.listarLibros();
+        if (libros != null) {
+            for (Libro libro : libros) {
+                tableModel.addRow(new Object[]{libro.getId(),libro.getAutor(), libro.getTitulo(), libro.getAnioPublicacion()});
+            }
+        }
+    }
+
+
+    //Genericos
+    private void limpiarCamposEnContenedor(java.awt.Container contenedor) {
+        for (java.awt.Component c : contenedor.getComponents()) {
+            if (c instanceof JTextField) {
+                ((JTextField) c).setText("");
+            } else if (c instanceof java.awt.Container) {
+                limpiarCamposEnContenedor((java.awt.Container) c);
+            }
+        }
+    }
+
+    // Cargar usuarios en comboBox1
+    private void cargarUsuariosEnCombo(JComboBox<Usuario> combo) {
+        if (usuarioService == null) {
+            usuarioService = new UsuarioServiceImpl(); // Asegurarse de que el servicio esté inicializado
+        }
+        combo.removeAllItems();
+        // No es necesario reinicializar usuarioService aquí
+        combo.addItem(new Usuario(0, "Seleccionar usuario", "", "")); // Opción por defecto
+        List<Usuario> usuarios = usuarioService.listarUsuarios();
+
+        if (usuarios != null && !usuarios.isEmpty()) { // Verifica tanto null COMO lista vacía
+            for (Usuario u : usuarios) {
+                combo.addItem(u);
+            }
+        } else {
+            System.out.println("DEBUG: No se encontraron usuarios para cargar en el combo.");
+            JOptionPane.showMessageDialog(panel1, "No hay usuarios registrados para mostrar.", "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+        combo.setSelectedIndex(0); // Selecciona el primer elemento (generalmente "Seleccionar usuario")
+        combo.revalidate();        // Le dice al layout manager que vuelva a calcular los tamaños y posiciones
+        combo.repaint();
+
+    }
+
+    // Cargar libros en comboBox2
+    private void cargarLibrosEnCombo(JComboBox<Libro> combo) {
+        combo.removeAllItems();
+        combo.addItem(new Libro(0, "Seleccionar libro", "", ""));
+        List<Libro> libros = libroService.listarLibros();
+        if (libros != null && !libros.isEmpty()) {
+            for (Libro l : libros) {
+                combo.addItem(l);
+            }
+        } else {
+            System.out.println("DEBUG: No se encontraron libros para cargar en el combo.");
+            JOptionPane.showMessageDialog(panel1, "No hay libros registrados para mostrar.", "Información", JOptionPane.INFORMATION_MESSAGE);
+        }
+
+    }
 
 
 }

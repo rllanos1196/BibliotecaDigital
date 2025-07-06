@@ -6,6 +6,12 @@ public class Usuario {
     private String apellidos;
     private String dni;
 
+    // Inside modelos.Usuario.java
+    @Override
+    public String toString() {
+        return nombre + " " + apellidos; // O el campo que prefieras mostrar
+    }
+
     public Usuario() {
     }
 
@@ -16,11 +22,7 @@ public class Usuario {
         this.dni = dni;
     }
 
-    // Inside modelos.Usuario.java
-    @Override
-    public String toString() {
-        return nombre + " " + apellidos;
-    }
+
 
     public long getId() {
         return id;

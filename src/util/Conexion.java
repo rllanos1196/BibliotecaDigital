@@ -5,9 +5,9 @@ import java.sql.SQLException;
 import java.sql.Connection;
 
 public class Conexion {
-    private static final String URL ="jdbc:mysql://localhost:3306/BibliotecaDigital?useSSL=true&serverTimezone=America/Lima";
+    private static final String URL ="jdbc:mysql://localhost:3306/blibliotecadigital?useSSL=true&serverTimezone=America/Lima";
     private static final String USUARIO = "root";
-    private static final String PASSWORD = "Azul2025@";
+    private static final String PASSWORD = "mysql";
     public static Connection conectar() {
         Connection con = null;
         try {

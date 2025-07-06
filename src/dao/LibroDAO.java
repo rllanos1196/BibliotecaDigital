@@ -26,7 +26,7 @@ public class LibroDAO {
     }
     public List<Libro> obtenerLibros() {
         List<Libro> lista = new ArrayList<>();
-        String sql = "SELECT * FROM Libro";
+        String sql = "SELECT * FROM libro";
         try (Connection con = Conexion.conectar();
              Statement st = con.createStatement();
              ResultSet rs = st.executeQuery(sql)) {
