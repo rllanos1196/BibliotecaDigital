@@ -9,6 +9,19 @@ public class Usuario {
     public Usuario() {
     }
 
+    public Usuario(long id, String nombre, String apellidos, String dni) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellidos = apellidos;
+        this.dni = dni;
+    }
+
+    // Inside modelos.Usuario.java
+    @Override
+    public String toString() {
+        return nombre + " " + apellidos;
+    }
+
     public long getId() {
         return id;
     }

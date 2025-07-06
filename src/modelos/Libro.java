@@ -1,13 +1,26 @@
 package modelos;
 
 public class Libro {
+
     private long id;
     private String autor;
     private String titulo;
     private String anioPublicacion;
 
-    public Libro() {
+   /* public Libro() {
+    }*/
+
+    public Libro(long id, String titulo, String autor, String anioPublicacion) {
+        this.id = id;
+        this.titulo = titulo;
+        this.autor = autor;
+        this.anioPublicacion = anioPublicacion;
     }
+
+    public Libro() {
+
+    }
+
 
     public long getId() {
         return id;
@@ -39,5 +52,10 @@ public class Libro {
 
     public void setAnioPublicacion(String anioPublicacion) {
         this.anioPublicacion = anioPublicacion;
+    }
+
+    @Override
+    public String toString() {
+        return autor + " - " + titulo;
     }
 }
