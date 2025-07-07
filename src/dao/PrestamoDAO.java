@@ -94,10 +94,13 @@ public class PrestamoDAO {
                             rs.getString("APELLIDOS"),
                             rs.getString("DNI")
                     ));
-                    p.getUsuario().setApellidos(rs.getString("APELLIDOS"));
-                    p.getUsuario().setDni(rs.getString("DNI"));
-                    p.getLibro().setTitulo(rs.getString("TITULO"));
-                    p.getLibro().setAutor(rs.getString("AUTOR"));
+                    p.setLibro(new Libro(
+                            rs.getLong("ID_LIBRO"),
+                            rs.getString("TITULO"),
+                            rs.getString("AUTOR"),
+                            ""
+                    ));
+
 
                     lista.add(p);
                 }
